@@ -3,10 +3,18 @@ import { Bell } from 'react-feather'; // Ajuste para o ícone que você está us
 import { NotificationDropdown } from './NotificationDropdown';
 import { IconButton } from '@/common/components/ui/IconButton';
 
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+}
+
 interface NotificationBellProps {
-  unreadCount: number; // Número de notificações não lidas
-  notifications: string[]; // Lista de notificações
-  handleMarkAsRead: (notification: string) => void; // Função para marcar uma notificação como lida
+  unreadCount: number;
+  notifications: Notification[]; // Corrigido de string[] para Notification[]
+  handleMarkAsRead: (id: string) => void; // Ajuste para corresponder ao NotificationDropdown
 }
 
 const NotificationBell: React.FC<NotificationBellProps> = ({ unreadCount, notifications, handleMarkAsRead }) => {
@@ -16,11 +24,11 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ unreadCount, notifi
     <div className="relative">
       {/* Usando o IconButton para o ícone de notificação */}
       <IconButton
-        icon={<Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />} // Passa o ícone como JSX
+        icon={<Bell className="w-5 h-5" />} // Passa o ícone como JSX
         tooltip="Notificações"
         tooltipPosition='bottom'
         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-        className="p-2 rounded-full hover:bg-white/20 relative"
+        className="relative"
       />
       {/* Exibição do contador de notificações */}
       {unreadCount > 0 && (

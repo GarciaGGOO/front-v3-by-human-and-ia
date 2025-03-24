@@ -17,17 +17,18 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     const tooltipClasses = {
       left: "right-full top-1/2 -translate-y-1/2 mr-2",
       right: "left-full top-1/2 -translate-y-1/2 ml-2",
-      top: "bottom-full left-1/2 transform -translate-x-1/2 mb-2", // Para exibir acima
-      bottom: "top-full left-1/2 transform -translate-x-1/2 mt-2", // Para exibir abaixo
+      top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+      bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
     };
 
     return (
       <div className="relative inline-flex items-center">
-        {tooltipPosition === "left" && isHovered && (
+        {isHovered && (
           <div
             className={cn(
-              "absolute w-max rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow-md",
-              tooltipClasses.left
+              "absolute z-50 w-max rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow-md opacity-0 transition-opacity duration-200",
+              tooltipClasses[tooltipPosition],
+              isHovered && "opacity-100"
             )}
           >
             {tooltip}
@@ -41,20 +42,11 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           )}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          aria-label={tooltip}
           {...props}
         >
           {icon}
         </button>
-        {tooltipPosition === "right" && isHovered && (
-          <div
-            className={cn(
-              "absolute w-max rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow-md",
-              tooltipClasses.right
-            )}
-          >
-            {tooltip}
-          </div>
-        )}
       </div>
     );
   }
