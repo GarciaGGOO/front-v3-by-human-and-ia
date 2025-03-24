@@ -1,6 +1,6 @@
 import { useModules } from "@/common/hooks/useModules";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@/common/components/ui/Button";
+import { IconButton } from "@/common/components/ui/IconButton";
 import { cn } from "@/common/lib/utils/mergeClasses";
 
 export function Sidebar() {
@@ -14,15 +14,13 @@ export function Sidebar() {
     <aside className="fixed bottom-0 left-0 top-16 w-64 border-r  border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900">
       <nav className="space-y-1">
         {currentModule.routes.map((route) => (
-          <Button
+          <IconButton
             key={route.path}
-            variant={pathname === route.path ? "primary" : "secondary"}
-            size="sm"
+            icon={<span>{route.name[0]}</span>} // Substitua por um ícone apropriado
+            tooltip={route.name}
             className={cn("w-full justify-start border-none text-left")}
             onClick={() => navigate(route.path)}
-          >
-            {route.name}
-          </Button>
+          />
         ))}
       </nav>
     </aside>

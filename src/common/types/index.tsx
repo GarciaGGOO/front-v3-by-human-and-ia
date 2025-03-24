@@ -17,14 +17,17 @@ export type ApiResponse<T> = {
   // Tipo para módulos do sistema
   export type Module = {
     id: string;
-    name: string;
+    name?: string;
     icon: React.ElementType;
     routes: ModuleRoute[];
+    enabled: boolean;
   };
   
   // Tipo para rotas dos módulos
   export type ModuleRoute = {
     path: string;
     name: string;
+    icon: React.ElementType;
     element: React.ReactNode;
+    enabled: boolean;
   };

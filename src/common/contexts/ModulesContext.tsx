@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { Module } from "@/common/types/index";
 import { useNavigate } from "react-router-dom";
+import { modulesConfig } from "./modulesConfig";
 
 const moduleFiles = import.meta.glob("@/modules/**/routes/routes.tsx", {
   eager: true,
@@ -20,7 +21,7 @@ type ModulesContextType = {
 
 const ModulesContext = createContext<ModulesContextType | undefined>(undefined);
 
-const order = ["core", "administration"];
+const order = modulesConfig.map((mod) => mod.id);
 
 export function ModulesProvider({ children }: PropsWithChildren) {
   const [modules, setModules] = useState<Module[]>([]);
@@ -29,9 +30,22 @@ export function ModulesProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const loadedModules = Object.values(moduleFiles)
-      .map((mod: any) => mod?.default)
-      .filter((mod): mod is Module => !!mod)
-      .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+    .map((mod: any) => mod?.default)
+    .filter((mod): mod is Module => !!mod && mod.enabled)
+    .map((mod) => ({
+      ...mod,
+      routes: mod.routes.filter(route => route.enabled)
+    }))
+    .sort((a, b) => {
+      const indexA = order.indexOf(a.id);
+      const indexB = order.indexOf(b.id);
+
+      const posA = indexA === -1 ? order.length : indexA;
+      const posB = indexB === -1 ? order.length : indexB;
+
+      return posA - posB;
+    });
+
 
     setModules(loadedModules);
 

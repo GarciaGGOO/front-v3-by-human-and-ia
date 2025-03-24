@@ -32,15 +32,6 @@ export function Header() {
           </Button>
         ))}
       </nav>
-
-      {/* <Button
-        variant="outline"
-        size="sm"
-        onClick={toggleTheme}
-        className="ml-4"
-      >
-        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-      </Button> */}
       <DarkModeToggle />
     </header>
   );

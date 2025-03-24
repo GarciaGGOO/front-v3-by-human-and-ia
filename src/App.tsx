@@ -6,11 +6,11 @@ import { AppRoutes } from "./common/routes/routes";
 function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider>
-          <ModulesProvider>
-            <AppRoutes />
-          </ModulesProvider>
-      </ThemeProvider>
+      <ModulesProvider>
+        <ThemeProvider>
+          <AppRoutes />
+        </ThemeProvider>
+      </ModulesProvider>
     </BrowserRouter>
   );
 }
