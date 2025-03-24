@@ -21,6 +21,7 @@ export type ApiResponse<T> = {
     icon: React.ElementType;
     routes: ModuleRoute[];
     enabled: boolean;
+    permissions?: string[];
   };
   
   // Tipo para rotas dos módulos

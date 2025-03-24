@@ -8,6 +8,7 @@ import {
 import type { Module } from "@/common/types/index";
 import { useNavigate } from "react-router-dom";
 import { modulesConfig } from "./modulesConfig";
+import { useAuth } from "@/auth/contexts/AuthContext";
 
 const moduleFiles = import.meta.glob("@/modules/**/routes/routes.tsx", {
   eager: true,
@@ -27,25 +28,33 @@ export function ModulesProvider({ children }: PropsWithChildren) {
   const [modules, setModules] = useState<Module[]>([]);
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
+
     const loadedModules = Object.values(moduleFiles)
-    .map((mod: any) => mod?.default)
-    .filter((mod): mod is Module => !!mod && mod.enabled)
-    .map((mod) => ({
-      ...mod,
-      routes: mod.routes.filter(route => route.enabled)
-    }))
-    .sort((a, b) => {
-      const indexA = order.indexOf(a.id);
-      const indexB = order.indexOf(b.id);
+      .map((mod: any) => mod?.default)
+      .filter((mod): mod is Module => !!mod && mod.enabled)
+      .map((mod) => ({
+        ...mod,
+        routes: mod.routes.filter((route) => route.enabled),
+      }))
+      .filter((mod) =>
+        mod.permissions
+          ? user.permissions.some((permission) =>
+              user.permissions.includes(permission))
+          : true
+      )
+      .sort((a, b) => {
+        const indexA = order.indexOf(a.id);
+        const indexB = order.indexOf(b.id);
 
-      const posA = indexA === -1 ? order.length : indexA;
-      const posB = indexB === -1 ? order.length : indexB;
+        const posA = indexA === -1 ? order.length : indexA;
+        const posB = indexB === -1 ? order.length : indexB;
 
-      return posA - posB;
-    });
-
+        return posA - posB;
+      });
 
     setModules(loadedModules);
 
@@ -57,7 +66,7 @@ export function ModulesProvider({ children }: PropsWithChildren) {
         navigate(loadedModules[0].routes[0].path);
       }
     }
-  }, []);
+  }, [user]);
 
   return (
     <ModulesContext.Provider
