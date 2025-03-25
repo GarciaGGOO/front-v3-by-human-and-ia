@@ -1,7 +1,9 @@
-import { FolderCog, Table2, FolderPlus } from 'lucide-react';
+import { FolderCog, Table2, TableColumnsSplitIcon, FolderPlus } from 'lucide-react';
 import { CreateModulesView } from '../pages/CreateModulesView';
 import { ListModulesView } from '../pages/ListModulesView';
+import { ListComputers } from '../pages/ListComputers';
 import type { Module } from '@/common/types/index';
+import { table } from 'console';
 
 export const usersModule: Module = {
   id: 'core',
@@ -22,6 +24,13 @@ export const usersModule: Module = {
       element: <ListModulesView />,
       enabled: true,
     },
+    {
+      path: '/core/list-coputers',
+      name: 'lista de computadores',
+      icon: TableColumnsSplitIcon,
+      element: <ListComputers />,
+      enabled: true,
+    }
   ],
   enabled: true,
 };

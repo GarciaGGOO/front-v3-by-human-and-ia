@@ -1,6 +1,8 @@
+// IconButton.tsx
 import { forwardRef, useState } from "react";
 import { cn } from "@/common/lib/utils/mergeClasses";
 import type { BaseProps } from "@/common/types/index";
+import { Button } from "@/common/components/ui/Button"; // Importe seu Button aqui
 
 interface IconButtonProps extends BaseProps {
   icon: React.ReactNode;
@@ -22,7 +24,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     };
 
     return (
-      <div className="relative inline-flex items-center">
+      <div className="relative inline-flex items-center align-middle"> {/* Garantindo alinhamento correto */}
         {isHovered && (
           <div
             className={cn(
@@ -34,19 +36,21 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             {tooltip}
           </div>
         )}
-        <button
+        {/* Usando o seu componente Button aqui */}
+        <Button
           ref={ref}
           className={cn(
-            "rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700",
+            "rounded-full p-2",
             className
           )}
+          variant="ghost"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           aria-label={tooltip}
           {...props}
         >
           {icon}
-        </button>
+        </Button>
       </div>
     );
   }

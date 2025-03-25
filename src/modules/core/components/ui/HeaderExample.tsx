@@ -14,7 +14,7 @@ export function Header() {
     string | number | undefined
   >("BMTECH");
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  // const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   const [notifications, setNotifications] = useState([
     {
@@ -82,7 +82,7 @@ export function Header() {
         <div
           className={cn(
             "flex items-center h-full transition-all duration-200",
-            isSidebarExpanded ? "w-56" : "w-12"
+            // isSidebarExpanded ? "w-56" : "w-12"
           )}
         >
 
@@ -125,7 +125,6 @@ export function Header() {
           })}
         </nav>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
           <NotificationBell
             unreadCount={notifications.filter((n) => !n.read).length}

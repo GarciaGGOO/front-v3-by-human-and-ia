@@ -59,11 +59,11 @@ export function DesignerAlignment() {
             selectedValue={options[0].value}
             onSelect={(value) => console.log(value)}
           />
-          <Button variant="primary">primary</Button>
-          <Button variant="secondary">secondary</Button>
-          <Button variant="outline">outline</Button>
+          <Button size="sm" variant="primary">primary</Button>
+          <Button size="md" variant="secondary">secondary</Button>
+          <Button size="lg" variant="outline">outline</Button>
           <Button variant="ghost">ghost</Button>
-          <IconButton icon={<RefreshCcw />} tooltip="Atualizar" />
+          <IconButton icon={<RefreshCcw className="w-5 h-5"/>} tooltip="Atualizar" />
           <DarkModeToggle />
           <NotificationBell
             unreadCount={notifications.filter((n) => !n.read).length}

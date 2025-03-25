@@ -11,7 +11,7 @@ export const DarkModeToggle: React.FC<{ className?: string }> = ({
 
   return (
     <IconButton
-      icon={theme === "light" ? <Moon size={20} /> : <Sun size={20} />} // O ícone depende do tema
+      icon={theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
       tooltip={theme === "light" ? "Ativar Modo Escuro" : "Ativar Modo Claro"}
       onClick={toggleTheme}
       tooltipPosition="bottom"

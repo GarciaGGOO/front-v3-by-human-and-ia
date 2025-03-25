@@ -20,7 +20,7 @@ export function Sidebar() {
             tooltipPosition="right"
             icon={
               route.icon ? (
-                React.createElement(route.icon)
+                React.createElement(route.icon, { className: "w-5 h-5"}) 
               ) : (
                 <span>{route.name[0]}</span>
               )
