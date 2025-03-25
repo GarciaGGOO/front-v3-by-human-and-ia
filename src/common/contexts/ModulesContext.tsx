@@ -28,9 +28,11 @@ export function ModulesProvider({ children }: PropsWithChildren) {
   const [modules, setModules] = useState<Module[]>([]);
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
+    console.log("Usuário no ModulesProvider:", user);
+    if (loading) return;
     if (!user) return;
 
     const loadedModules = Object.values(moduleFiles)
@@ -42,8 +44,9 @@ export function ModulesProvider({ children }: PropsWithChildren) {
       }))
       .filter((mod) =>
         mod.permissions
-          ? user.permissions.some((permission) =>
-              user.permissions.includes(permission))
+          ? mod.permissions.some((permission) =>
+              user.permissions.includes(permission)
+            )
           : true
       )
       .sort((a, b) => {
@@ -55,15 +58,18 @@ export function ModulesProvider({ children }: PropsWithChildren) {
 
         return posA - posB;
       });
-
+    console.log("Módulos carregados:", loadedModules);
     setModules(loadedModules);
 
     // Se houver módulos carregados, definir o primeiro como ativo
     if (loadedModules.length > 0) {
       setCurrentModule(loadedModules[0]);
-      // Navegar automaticamente para a primeira rota do primeiro módulo
+    
       if (loadedModules[0].routes.length > 0) {
-        navigate(loadedModules[0].routes[0].path);
+        setTimeout(() => {
+          console.log("Navegando para:", loadedModules[0].routes[0].path);
+          navigate(loadedModules[0].routes[0].path);
+        }, 100);
       }
     }
   }, [user]);

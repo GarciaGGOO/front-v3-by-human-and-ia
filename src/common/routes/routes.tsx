@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/modules/core/components/layouts/MainLayout";
 import { useModules } from "@/common/hooks/useModules";
 import { ProtectedRoute } from "@/auth/components/ProtectedRoute";
@@ -8,7 +8,6 @@ export function AppRoutes() {
   const { modules } = useModules();
 
   return (
-    <Router>
       <Routes>
         {/* Rotas de autenticação (login, registro) */}
         {authRoutes.map((route) => (
@@ -24,6 +23,5 @@ export function AppRoutes() {
           )}
         </Route>
       </Routes>
-    </Router>
   );
 }

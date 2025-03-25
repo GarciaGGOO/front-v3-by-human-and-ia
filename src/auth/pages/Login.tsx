@@ -38,7 +38,8 @@ export const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      console.log("Login attempt with email:", email, "and password:", password);
+      await login({email, password});
     } catch (err) {
       setError("Email ou senha inválidos");
     } finally {

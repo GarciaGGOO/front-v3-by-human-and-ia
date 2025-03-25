@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type User = {
@@ -9,6 +9,7 @@ type User = {
 
 type AuthContextType = {
   user: User | null;
+  loading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => void;
 };
@@ -17,26 +18,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Tenta carregar o usuário do localStorage ao iniciar a aplicação
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    async function fetchUser() {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar usuário:", error);
+      } finally {
+        setLoading(false);
+      }
     }
+    fetchUser();
   }, []);
 
   async function login({ email, password }: { email: string; password: string }) {
-    // Simula requisição à API
     const response = await fakeLoginRequest(email, password);
-
-    if (response.success) {
-      localStorage.setItem("user", JSON.stringify(response.user));
-      setUser(response.user);
-      navigate("/"); // Redireciona para a página inicial
+    
+    if (!response.success) {
+      throw new Error("Credenciais inválidas"); // 🚨 Agora um erro será lançado
     }
+  
+    localStorage.setItem("user", JSON.stringify(response.user));
+    setUser(response.user);
+    console.log("User após login:", response.user);
+    navigate("/"); 
   }
+  
 
   function logout() {
     localStorage.removeItem("user");
@@ -44,8 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     navigate("/login");
   }
 
+  if (loading) return <div>Carregando...</div>; // Bloqueia carregamento prematuro
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -59,14 +74,13 @@ export function useAuth() {
   return context;
 }
 
-// Simula uma API de login
 async function fakeLoginRequest(email: string, password: string) {
   return new Promise<{ success: boolean; user?: User }>((resolve) =>
     setTimeout(() => {
-      if (email === "admin@example.com" && password === "123456") {
+      if (email === "admin@example.com" && password === "admin123") {
         resolve({
           success: true,
-          user: { id: "1", name: "Admin", permissions: ["ADMIN", "DASHBOARD"] },
+          user: { id: "1", name: "Admin", permissions: ["core", "designerAlignment"] },
         });
       } else {
         resolve({ success: false });
