@@ -80,7 +80,17 @@ export const computerColumns = [
     { key: "name", label: "Name" },
     { key: "status", label: "Status" },
     { key: "ip", label: "IP" },
-    { key: "disks", label: "Disks", render: (device: Device) => Array.from({ length: device.disks }).map((_, i) => <HardDrive key={i} className="w-4 h-4 text-gray-500" />) },
+    {
+      key: "disks",
+      label: "Disks",
+      render: (device: Device) => (
+        <div className="flex gap-1">
+          {Array.from({ length: device.disks }).map((_, i) => (
+            <HardDrive key={i} className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          ))}
+        </div>
+      )
+    },
     { key: "storage", label: "Storage", render: (device: Device) => renderStorageBar(device.storage) },
     { key: "memory", label: "Memory" },
     { key: "user", label: "User" },

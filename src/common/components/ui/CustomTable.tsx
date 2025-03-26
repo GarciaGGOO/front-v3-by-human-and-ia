@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUp, ArrowDown, ArrowLeftRight } from "lucide-react"; // Importando os ícones
+import { cn } from "@/common/lib/utils/mergeClasses";
 
 interface Column<T> {
   key: keyof T;
@@ -55,59 +56,70 @@ export function CustomTable<T>({ data, columns }: CustomTableProps<T>) {
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-        <thead>
-          <tr className="bg-gray-100 dark:bg-gray-800">
-            {columns.map((column) => (
-              <th
-                key={column.key as string}
-                className="border p-2 text-right cursor-pointer"
-                onClick={() => handleSort(column.key)}
-              >
-                <div className="flex items-center justify-start">
-                  {/* Ícone à esquerda */}
-                  {sortConfig.key === column.key &&
-                    (sortConfig.direction === "asc" ? (
-                      <ArrowUp size={14} />
-                    ) : sortConfig.direction === "desc" ? (
-                      <ArrowDown size={14} />
-                    ) : (
-                      <ArrowLeftRight size={14} />
-                    ))}
-                  {/* Texto à direita */}
-                  <span className="ml-2 text-gray-900 dark:text-white">
-                    {column.label}
-                  </span>
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="animate-in fade-in slide-in-from-top-2 duration-200">
-          {sortedData.map((item, index) => (
-            <tr
-              key={index}
-              className={
-                index % 2 === 0
-                  ? "bg-white dark:bg-gray-900"
-                  : "bg-gray-50 dark:bg-gray-800"
-              }
-            >
+    <div className="relative rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
               {columns.map((column) => (
-                <td
+                <th
                   key={column.key as string}
-                  className="border p-2 text-gray-900 dark:text-white"
+                  onClick={() => handleSort(column.key)}
+                  className={cn(
+                    "px-6 py-4 text-left text-sm font-medium",
+                    "text-gray-500 dark:text-gray-400",
+                    "cursor-pointer transition-colors",
+                    "hover:bg-gray-100 dark:hover:bg-gray-700"
+                  )}
                 >
-                  {column.render
-                    ? column.render(item)
-                    : (item[column.key] as React.ReactNode)}
-                </td>
+                  <div className="flex items-center gap-1">
+                    <span>{column.label}</span>
+                    <span
+                      className={cn(
+                        "transition-opacity",
+                        sortConfig.key === column.key
+                          ? "opacity-100"
+                          : "opacity-30"
+                      )}
+                    >
+                      {sortConfig.key === column.key ? (
+                        sortConfig.direction === "asc" ? (
+                          <ArrowUp className="h-3 w-3" />
+                        ) : sortConfig.direction === "desc" ? (
+                          <ArrowDown className="h-3 w-3" />
+                        ) : (
+                          <ArrowLeftRight className="h-3 w-3" />
+                        )
+                      ) : (
+                        <ArrowLeftRight className="h-3 w-3" />
+                      )}
+                    </span>
+                  </div>
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-800 dark:bg-gray-900">
+            {sortedData.map((item, index) => (
+              <tr
+                key={index}
+                className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              >
+                {columns.map((column) => (
+                  <td
+                    key={column.key as string}
+                    className="px-6 py-4 text-sm text-gray-900 dark:text-white"
+                  >
+                    {column.render
+                      ? column.render(item)
+                      : (item[column.key] as React.ReactNode)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

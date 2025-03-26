@@ -1,21 +1,16 @@
-import { forwardRef } from "react";
+import { forwardRef, ButtonHTMLAttributes } from "react";
 import { cn } from "@/common/lib/utils/mergeClasses";
 import type { BaseProps } from "@/common/types/index";
 
 // Props específicas do componente Button
-interface ButtonProps extends BaseProps {
+interface ButtonProps extends BaseProps, ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
-  onClick?: () => void;
-  disabled?: boolean;
 }
 
 // Componente Button reutilizável com suporte a diferentes variantes e tamanhos
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, variant = "primary", size = "md", children, ...props },
-    ref
-  ) => {
+  ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -28,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "secondary",
             "border-2 border-gray-300 bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800":
               variant === "outline",
-              "bg-transparent text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800":
+            "bg-transparent text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800":
               variant === "ghost",
             "px-3 py-1.5 text-sm": size === "sm",
             "px-4 py-2 text-base": size === "md",

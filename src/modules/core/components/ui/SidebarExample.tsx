@@ -1,12 +1,12 @@
 import React from "react";
 import { useModules } from "@/common/hooks/useModules";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IconButton } from "@/common/components/ui/IconButton";
 import { cn } from "@/common/lib/utils/mergeClasses";
 
 export function Sidebar() {
   const { currentModule } = useModules();
-  const { pathname } = useLocation();
+
   const navigate = useNavigate();
 
   if (!currentModule) return null;

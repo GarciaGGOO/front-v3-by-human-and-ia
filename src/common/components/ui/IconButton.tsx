@@ -1,8 +1,8 @@
-// IconButton.tsx
-import { forwardRef, useState } from "react";
+import { forwardRef, useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/common/lib/utils/mergeClasses";
 import type { BaseProps } from "@/common/types/index";
-import { Button } from "@/common/components/ui/Button"; // Importe seu Button aqui
+import { Button } from "@/common/components/ui/Button";
 
 interface IconButtonProps extends BaseProps {
   icon: React.ReactNode;
@@ -15,34 +15,57 @@ interface IconButtonProps extends BaseProps {
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ className, icon, tooltip, tooltipPosition = "right", ...props }, ref) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [tooltipStyles, setTooltipStyles] = useState({ top: 0, left: 0 });
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
 
-    const tooltipClasses = {
-      left: "right-full top-1/2 -translate-y-1/2 mr-2",
-      right: "left-full top-1/2 -translate-y-1/2 ml-2",
-      top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
-      bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
-    };
+    useEffect(() => {
+      if (isHovered && buttonRef.current && tooltipRef.current) {
+        const buttonRect = buttonRef.current.getBoundingClientRect();
+        const tooltipRect = tooltipRef.current.getBoundingClientRect();
+
+        const tooltipPositions = {
+          left: {
+            top:
+              buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
+            left: buttonRect.left - tooltipRect.width - 8, // 8px de espaço
+          },
+          right: {
+            top:
+              buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
+            left: buttonRect.right + 8,
+          },
+          top: {
+            top: buttonRect.top - tooltipRect.height - 8,
+            left:
+              buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
+          },
+          bottom: {
+            top: buttonRect.bottom + 8,
+            left:
+              buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
+          },
+        };
+
+        setTooltipStyles(tooltipPositions[tooltipPosition]);
+      }
+    }, [isHovered, tooltipPosition]);
 
     return (
-      <div className="relative inline-flex items-center align-middle"> {/* Garantindo alinhamento correto */}
-        {isHovered && (
-          <div
-            className={cn(
-              "absolute z-50 w-max rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow-md opacity-0 transition-opacity duration-200",
-              tooltipClasses[tooltipPosition],
-              isHovered && "opacity-100"
-            )}
-          >
-            {tooltip}
-          </div>
-        )}
-        {/* Usando o seu componente Button aqui */}
+      <>
         <Button
-          ref={ref}
-          className={cn(
-            "rounded-full p-2",
-            className
-          )}
+          ref={(node) => {
+            if (node) {
+              buttonRef.current = node;
+              if (typeof ref === "function") {
+                ref(node);
+              } else if (ref) {
+                (ref as React.RefObject<HTMLButtonElement>).current =
+                  node;
+              }
+            }
+          }}
+          className={cn("rounded-full p-2", className)}
           variant="ghost"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -51,7 +74,19 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         >
           {icon}
         </Button>
-      </div>
+
+        {isHovered &&
+          createPortal(
+            <div
+              ref={tooltipRef}
+              className="fixed z-50 w-max px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-md transition-opacity duration-200"
+              style={{ top: tooltipStyles.top, left: tooltipStyles.left }}
+            >
+              {tooltip}
+            </div>,
+            document.body
+          )}
+      </>
     );
   }
 );
