@@ -1,16 +1,22 @@
-import { Outlet } from 'react-router-dom';
-import { Header } from '../ui/HeaderExample';
-import { Sidebar } from '../ui/SidebarExample';
+import { Outlet } from "react-router-dom";
+import { Header } from "../ui/HeaderExample";
+import { Sidebar } from "../ui/SidebarExample";
 
 export function MainLayout() {
-
   return (
-    <div className="min-h-screen bg-white text-gray-900 transition-colors dark:bg-gray-900 dark:text-gray-100">
+    <div className="h-screen w-screen bg-white overflow-hidden text-gray-900 transition-colors dark:bg-gray-900 dark:text-gray-100">
+      {/* Header fixo */}
       <Header />
-      <Sidebar />
-      <main className="ml-12 mt-16 p-4">
-        <Outlet />
-      </main>
+
+      <div className="flex">
+        {/* Sidebar fixa à esquerda */}
+        <Sidebar />
+
+        {/* Main ajustado para não vazar da tela */}
+        <main className="ml-12 mt-16 flex-1 h-[calc(100vh-64px)] overflow-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

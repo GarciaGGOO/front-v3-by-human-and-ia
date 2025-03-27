@@ -5,6 +5,8 @@ import { Button } from "@/common/components/ui/Button";
 import { Combobox } from "@/common/components/ui/Combobox";
 import { DarkModeToggle } from "@/common/components/ui/DarkModeToggle";
 import { IconButton } from "@/common/components/ui/IconButton";
+import { Search } from "@/common/components/ui/Search";
+import { TextField } from "@/common/components/ui/TextField";
 
 import NotificationBell from "@/modules/core/components/ui/NotificationBell";
 import { RefreshCcw } from "lucide-react";
@@ -73,7 +75,12 @@ export function DesignerAlignment() {
         </div>
       </Container>
       <Container bordered={true}>
-        <div className="flex items-center space-x-4 mt-4"></div>
+        <div className="flex items-center space-x-4 mt-4">
+        <Search value="" onSearch={() => {}} />
+        <TextField placeholder="input" variant="input" size="md" />
+        <TextField placeholder="password" variant="password" size="md" />
+        <TextField placeholder="search" variant="search" size="md" />
+        </div>
       </Container>
     </div>
   );

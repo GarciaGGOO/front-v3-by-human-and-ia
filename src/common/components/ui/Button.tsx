@@ -15,7 +15,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "rounded-md font-medium transition-colors",
+          "rounded-md font-medium transition-colors","active:scale-95",
+
           {
             "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600":
               variant === "primary",

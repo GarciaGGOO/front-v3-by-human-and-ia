@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/common/lib/utils/mergeClasses";
 
 interface ComboboxOption {
   value: string | number | undefined;
@@ -12,6 +13,7 @@ interface ComboboxProps {
   onSelect: (value: string | number | undefined) => void;
   placeholder: string;
   notNull?: boolean;
+  className?: string;
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
@@ -20,6 +22,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
   onSelect,
   placeholder,
   notNull = false,
+  className,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownAbove, setIsDropdownAbove] = useState(false);
@@ -76,7 +79,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
   };
 
   return (
-    <div ref={comboboxRef} className="relative w-full max-w-md">
+    <div ref={comboboxRef} className={cn("relative w-full max-w-md", className)}>
       <button
         type="button"
         onClick={(e) => {
@@ -99,7 +102,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
             <div
               key={option.value}
               onMouseDown={(event) => handleSelect(event, option.value)}
-              className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              className="z-50 flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               <span className="flex-1">{option.label}</span>
             </div>

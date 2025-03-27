@@ -16,6 +16,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ className, icon, tooltip, tooltipPosition = "right", ...props }, ref) => {
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipStyles, setTooltipStyles] = useState({ top: 0, left: 0 });
+    const [isSelected, setIsSelected] = useState(false); // Estado para controlar se o botão está selecionado
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const tooltipRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,6 +52,11 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       }
     }, [isHovered, tooltipPosition]);
 
+    const handleClick = () => {
+      setIsSelected(!isSelected); // Alterna o estado de seleção ao clicar no botão
+      if (props.onClick) props.onClick(); // Chama a função onClick original, se existir
+    };
+
     return (
       <>
         <Button
@@ -60,15 +66,19 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
               if (typeof ref === "function") {
                 ref(node);
               } else if (ref) {
-                (ref as React.RefObject<HTMLButtonElement>).current =
-                  node;
+                (ref as React.RefObject<HTMLButtonElement>).current = node;
               }
             }
           }}
-          className={cn("rounded-full p-2", className)}
+          className={cn(
+            "rounded-full p-2",
+            className,
+            isSelected ? "bg-blue-500 text-white" : "bg-transparent" // Aplica a classe de destaque ao botão selecionado
+          )}
           variant="ghost"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={handleClick} // Chama a função de clique para alternar o estado de seleção
           aria-label={tooltip}
           {...props}
         >
