@@ -19,12 +19,12 @@ const optionPriority = [
 
 const optionStatus = [
   { value: "ABERTO", label: "Aberto" },
-  { value: "EM_ANDAMENTO", label: "Em andamento" },
+  { value: "EM_ANDAMENTO", label: "Em andamento teste" },
   { value: "FECHADO", label: "Fechado" },
   { value: "CANCELADO", label: "Cancelado" },
 ];
 
-const TicketItem: React.FC<TicketProps> = ({
+export const TicketItem: React.FC<TicketProps> = ({
   id,
   userName,
   userPhoto,
@@ -37,8 +37,7 @@ const TicketItem: React.FC<TicketProps> = ({
   const [selectedPriority, setSelectedPriority] = useState(priority);
 
   return (
-    <div className="flex items-center gap-6 p-4 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700">
-      {/* Checkbox */}
+    <div className="flex items-center gap-4 p-2 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700">
       <input
         type="checkbox"
         checked={checked}
@@ -46,12 +45,11 @@ const TicketItem: React.FC<TicketProps> = ({
         className="w-5 h-5 cursor-pointer"
       />
 
-      {/* User photo and info */}
       <div className="flex items-center gap-3">
         <img
           src={userPhoto}
           alt={userName}
-          className="w-16 h-16 rounded-full"
+          className="w-10 h-10 rounded-full"
         />
         <div className="flex flex-col">
           <p className="font-semibold text-lg text-gray-900 dark:text-white">
@@ -61,14 +59,14 @@ const TicketItem: React.FC<TicketProps> = ({
         </div>
       </div>
 
-      {/* Status and Priority Comboboxes */}
-      <div className="flex flex-col gap-1 ml-auto min-w-[150px]">
+      <div className="flex flex gap-1 ml-auto min-w-[150px]">
         <Combobox
           options={optionStatus}
           selectedValue={selectedStatus || ""}
           onSelect={(value) => setSelectedStatus(value as string)}
           placeholder="Status"
-          className="text-sm"
+          className="text-sm min-w-[30px]"
+          variant="ghost"
         />
 
         <Combobox
@@ -77,10 +75,10 @@ const TicketItem: React.FC<TicketProps> = ({
           onSelect={(value) => setSelectedPriority(value as string)}
           placeholder="Prioridade"
           className="text-sm"
+          variant="ghost"
         />
       </div>
     </div>
   );
 };
 
-export default TicketItem;

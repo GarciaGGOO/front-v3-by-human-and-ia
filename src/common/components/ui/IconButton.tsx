@@ -6,7 +6,7 @@ import { Button } from "@/common/components/ui/Button";
 
 interface IconButtonProps extends BaseProps {
   icon: React.ReactNode;
-  tooltip: string;
+  tooltip?: string;
   tooltipPosition?: "left" | "right" | "top" | "bottom";
   onClick?: () => void;
   disabled?: boolean;
@@ -16,45 +16,42 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ className, icon, tooltip, tooltipPosition = "right", ...props }, ref) => {
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipStyles, setTooltipStyles] = useState({ top: 0, left: 0 });
-    const [isSelected, setIsSelected] = useState(false); // Estado para controlar se o botão está selecionado
+    const [isSelected, setIsSelected] = useState(false);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const tooltipRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-      if (isHovered && buttonRef.current && tooltipRef.current) {
-        const buttonRect = buttonRef.current.getBoundingClientRect();
-        const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      if (!isHovered || !buttonRef.current || !tooltipRef.current || !tooltip)
+        return;
 
-        const tooltipPositions = {
-          left: {
-            top:
-              buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
-            left: buttonRect.left - tooltipRect.width - 8, // 8px de espaço
-          },
-          right: {
-            top:
-              buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
-            left: buttonRect.right + 8,
-          },
-          top: {
-            top: buttonRect.top - tooltipRect.height - 8,
-            left:
-              buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
-          },
-          bottom: {
-            top: buttonRect.bottom + 8,
-            left:
-              buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
-          },
-        };
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
 
-        setTooltipStyles(tooltipPositions[tooltipPosition]);
-      }
-    }, [isHovered, tooltipPosition]);
+      const tooltipPositions = {
+        left: {
+          top: buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
+          left: buttonRect.left - tooltipRect.width - 8,
+        },
+        right: {
+          top: buttonRect.top + buttonRect.height / 2 - tooltipRect.height / 2,
+          left: buttonRect.right + 8,
+        },
+        top: {
+          top: buttonRect.top - tooltipRect.height - 8,
+          left: buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
+        },
+        bottom: {
+          top: buttonRect.bottom + 8,
+          left: buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2,
+        },
+      };
+
+      setTooltipStyles(tooltipPositions[tooltipPosition]);
+    }, [isHovered, tooltipPosition, tooltip]);
 
     const handleClick = () => {
-      setIsSelected(!isSelected); // Alterna o estado de seleção ao clicar no botão
-      if (props.onClick) props.onClick(); // Chama a função onClick original, se existir
+      setIsSelected(!isSelected);
+      props.onClick?.();
     };
 
     return (
@@ -63,22 +60,20 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           ref={(node) => {
             if (node) {
               buttonRef.current = node;
-              if (typeof ref === "function") {
-                ref(node);
-              } else if (ref) {
+              if (typeof ref === "function") ref(node);
+              else if (ref)
                 (ref as React.RefObject<HTMLButtonElement>).current = node;
-              }
             }
           }}
           className={cn(
             "rounded-full p-2",
             className,
-            isSelected ? "bg-blue-500 text-white" : "bg-transparent" // Aplica a classe de destaque ao botão selecionado
+            isSelected ? "bg-blue-500 text-white" : "bg-transparent"
           )}
           variant="ghost"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          onClick={handleClick} // Chama a função de clique para alternar o estado de seleção
+          onClick={handleClick}
           aria-label={tooltip}
           {...props}
         >
@@ -86,11 +81,13 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         </Button>
 
         {isHovered &&
+          tooltip &&
           createPortal(
             <div
               ref={tooltipRef}
               className="fixed z-50 w-max px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-md transition-opacity duration-200"
               style={{ top: tooltipStyles.top, left: tooltipStyles.left }}
+              aria-hidden={!isHovered}
             >
               {tooltip}
             </div>,

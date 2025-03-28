@@ -14,6 +14,7 @@ interface ComboboxProps {
   placeholder: string;
   notNull?: boolean;
   className?: string;
+  variant?: "default" | "ghost";
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
@@ -23,10 +24,12 @@ export const Combobox: React.FC<ComboboxProps> = ({
   placeholder,
   notNull = false,
   className,
+  variant = "default",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownAbove, setIsDropdownAbove] = useState(false);
   const comboboxRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (
     event: React.MouseEvent,
@@ -49,7 +52,6 @@ export const Combobox: React.FC<ComboboxProps> = ({
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -64,29 +66,35 @@ export const Combobox: React.FC<ComboboxProps> = ({
     placeholder;
 
   const toggleDropdown = () => {
-    if (!isOpen) {
-      // Verifica o espaço disponível acima ou abaixo do Combobox
-      if (comboboxRef.current) {
-        const rect = comboboxRef.current.getBoundingClientRect();
-        const spaceAbove = rect.top;
-        const spaceBelow = window.innerHeight - rect.bottom;
+    if (!isOpen && comboboxRef.current) {
+      const rect = comboboxRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
 
-        // Se há mais espaço acima do que abaixo, abre para cima
-        setIsDropdownAbove(spaceAbove > spaceBelow);
-      }
+      requestAnimationFrame(() => {
+        if (dropdownRef.current) {
+          const dropdownHeight = dropdownRef.current.offsetHeight;
+          setIsDropdownAbove(spaceBelow < dropdownHeight);
+        }
+      });
     }
     setIsOpen(!isOpen);
   };
 
   return (
-    <div ref={comboboxRef} className={cn("relative w-full max-w-md", className)}>
+    <div ref={comboboxRef} className={cn("relative w-full max-w-md")}>
       <button
         type="button"
         onClick={(e) => {
           e.preventDefault();
           toggleDropdown();
         }}
-        className="w-full px-4 py-2 text-left border border-gray-200 rounded-md flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+        className={cn(
+          "w-full px-2 py-1 text-left flex rounded-md items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500",
+          variant === "default"
+            ? "border rounded-md border-gray-200 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+            : "hover:bg-gray-100 dark:hover:bg-gray-700",
+          className
+        )}
       >
         <span>{selectedLabel}</span>
         <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-400" />
@@ -94,15 +102,22 @@ export const Combobox: React.FC<ComboboxProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute z-10 w-full mt-1 border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto bg-white dark:bg-gray-800 dark:text-white dark:border-gray-700 ${
+          ref={dropdownRef}
+          className={cn(
+            "absolute z-50 w-full mt-2 border rounded-md shadow-lg border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700",
             isDropdownAbove ? "bottom-full mb-2" : "top-full mt-2"
-          }`}
+          )}
         >
           {optionsWithNull.map((option) => (
             <div
               key={option.value}
               onMouseDown={(event) => handleSelect(event, option.value)}
-              className="z-50 flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              className={cn(
+                "flex items-center px-2 py-2 cursor-pointer hover:rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+                selectedValue === option.value
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-800 dark:text-gray-200"
+              )}
             >
               <span className="flex-1">{option.label}</span>
             </div>

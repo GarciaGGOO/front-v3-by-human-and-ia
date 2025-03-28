@@ -68,7 +68,7 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="top-0 left-0 right-0">
       {/* Top bar */}
       <div
         className={cn(
@@ -109,10 +109,10 @@ export function Header() {
                 onClick={() => handleModuleChange(module)}
                 className={cn(
                   "h-full px-4 flex items-center gap-2",
-                  "border-b-2 -mb-[1px]",
+                  "border-b-2 -mb-[2px]",
                   "transition-all duration-200",
                   isActive
-                    ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                    ? "border-blue-500 text-blue-500 dark:text-blue-400"
                     : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 )}
               >
